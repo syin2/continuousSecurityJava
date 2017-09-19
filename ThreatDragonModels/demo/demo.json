@@ -1,17 +1,12 @@
 {
   "summary": {
     "title": "demo",
-    "owner": "wendyi"
+    "owner": "wendyi",
+    "description": "foo"
   },
   "detail": {
     "contributors": [],
-    "diagrams": [
-      {
-        "title": "demo",
-        "thumbnail": "./public/content/images/thumbnail.jpg",
-        "id": 0
-      }
-    ],
+    "diagrams": [],
     "reviewer": "none"
   }
 }
