@@ -1,0 +1,79 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'org.owasp.dependencycheck'
+
+sourceCompatibility = 1.8
+
+ext {
+	suppressionFileName = ""
+}
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'org.owasp:dependency-check-gradle:1.4.5'
+		
+	}
+}
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+	  compile 'org.springframework:spring-webmvc:4.+'
+	  compile 'com.google.guava:guava:19.+'
+	  compile 'org.mybatis:mybatis:3.+'
+	  testCompile group: 'junit', name: 'junit', version: '4.+'
+	  testCompile group: 'org.hamcrest', name: 'hamcrest-core', version: '1.+'
+	  testCompile 'org.mockito:mockito-core:1.+'
+  }
+
+sourceSets {
+	main {
+		java {
+			srcDir 'src/main'
+		}
+	}
+	test {
+		java {
+			srcDir 'src/test'
+		}
+	}
+}
+
+task vulnerableComponents(dependsOn: ['dependencyCheck']) {
+}
+
+task vulnerableComponentsWithWhitelist (dependsOn: ['setSuppressionFile', 'dependencyCheck']) {
+}
+
+task setSuppressionFile() {
+	doFirst {
+		suppressionFileName = "src/vulnerableCheckSuppression.xml"
+		println suppressionFileName
+	}
+}
+
+dependencyCheck {
+    skipConfigurations=["apiElements", "implementation", "runtimeElements", "runtimeOnly", "testImplementation", "testRuntimeOnly"]
+    autoUpdate=true
+    failBuildOnCVSS=1
+	suppressionFile=suppressionFileName
+}
+
+task changePermissions (type:Exec) {
+   workingDir '.'
+
+   commandLine 'bash', '-c', 'chmod +x ../talisman.sh'
+}
+
+task findSecrets (type:Exec) {
+   workingDir '.'
+
+   doFirst {
+        standardOutput = new FileOutputStream('build/reports/talisman.txt')
+   }
+   
+   commandLine "bash", "-c", "../talisman.sh | /usr/local/bin/talisman"
+}
