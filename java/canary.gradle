@@ -72,7 +72,9 @@ task findSecrets (type:Exec) {
    workingDir '.'
 
    doFirst {
-        standardOutput = new FileOutputStream('build/reports/talisman.txt')
+  	    touch 'build/reports/talisman.txt'
+   	    chmod 777 'build/reports/talisman.txt'
+         standardOutput = new FileOutputStream('build/reports/talisman.txt')
    }
    
    commandLine "bash", "-c", "../talisman.sh | /usr/local/bin/talisman"
