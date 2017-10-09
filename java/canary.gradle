@@ -74,8 +74,20 @@ task findSecrets (type:Exec) {
    doFirst {
   	    touch 'build/reports/talisman.txt'
    	    chmod 777 'build/reports/talisman.txt'
-         standardOutput = new FileOutputStream('build/reports/talisman.txt')
+        standardOutput = new FileOutputStream('build/reports/talisman.txt')
    }
    
    commandLine "bash", "-c", "../talisman.sh | /usr/local/bin/talisman"
+}
+
+task upgradesAvailable (type:Exec, dependsOn: 'dependencies') {
+   workingDir '.'
+
+   doFirst {
+  	    touch 'build/reports/upgrades.txt'
+   	    chmod 777 'build/reports/upgrades.txt'
+        standardOutput = new FileOutputStream('build/reports/upgrades.txt')
+   }
+
+   commandLine 'bash', '-c', 'gradle dependencies'
 }
